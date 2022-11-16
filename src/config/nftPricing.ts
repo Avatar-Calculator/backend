@@ -137,7 +137,8 @@ const CONTRACT_ADDRESS_TO_COLLECTION_SLUG = {
     "0x45ee1caed83525673843321107bccadecb9065d7": "spooky-season-tirli-x-reddit-collectible-avatars",
     "0x150afa2dfcaaada471472dfa6ad4b79e718a197c": "spooky-season-treasureofophiel-x-reddit-collectibl",
     "0x04125a97a0f2583cd485be2c34b651cc13c38a27": "spooky-season-avirenft-x-reddit-collectible-ava",
-    "0x21d426e2B88Fbf8b93adf0591A2D5B08d58F089f": "spooky-season-baldtuesdays-x-reddit-collectible"
+    "0x21d426e2B88Fbf8b93adf0591A2D5B08d58F089f": "spooky-season-baldtuesdays-x-reddit-collectible",
+    "0x622d8fea4603ba9edaf1084b407052d8b0a9bed7": "reddit-cup-2022-x-reddit-collectible-avatars",
 }
 
 const ankrFilters = Object.keys(CONTRACT_ADDRESS_TO_COLLECTION_SLUG).map((obj) => { 
