@@ -3,11 +3,13 @@ import cron from 'node-cron'
 import AnkrProvider from '@ankr.com/ankr.js'
 
 import { Avatars } from '../models/avatar'
+import { AvatarTimeSeries } from '../models/avatar_timeseries'
 import { PremiumWallets } from '../models/premium_wallets'
 import { WalletCaches } from '../models/wallet_caches'
 
 //Every 30 minutes
 export const initCron = () => {
+    getAvatarTimeSeries();
     getETHToUSDConversion();
     getAvatarPrices();
     cron.schedule('*/30 * * * *', () => {
@@ -17,6 +19,7 @@ export const initCron = () => {
 }
 
 export let prices : { [key:string]: { floor_price: number, floor_price_change: number, last_sale: number, last_sale_change: number, generation: string, hyperlink: string }} = {};
+export let priceTimeseries: { [key:string]: {floor_price: number, last_sale: number, createdAt: Date}[]} = {};
 export let conversion: number = 0;
 
 async function getAvatarPrices() {
@@ -33,6 +36,20 @@ async function getAvatarPrices() {
     }
     lastSyncTime = new Date();
     console.log("Refreshed Avatar prices at " + new Date().toISOString());
+}
+
+export async function getAvatarTimeSeries() {
+    const timeseries = await AvatarTimeSeries.find({}).lean();
+    for(let timeserie of timeseries) {
+        priceTimeseries[timeserie.name] = timeserie.timeseries.map((el) => {
+            return {
+                floor_price: el.floor_price, 
+                last_sale: el.last_sale, 
+                createdAt: el.createdAt
+            }
+        })
+    }
+    console.log("Refreshed Avatar timeseries at " + new Date().toISOString());
 }
 
 const coinGeckoOptions = {

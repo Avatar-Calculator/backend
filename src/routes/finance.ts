@@ -3,11 +3,13 @@ import Web3Utils from 'web3-utils'
 
 import { collectUniqueWallets } from '../config/dataCollection'
 import { isAuthenticated } from '../config/firebaseAuthMiddleware'
-import { conversion, determineAvatars, lastSyncTime, prices } from '../config/nftPricing'
+import { conversion, determineAvatars, lastSyncTime, prices, priceTimeseries } from '../config/nftPricing'
 import { Accounts } from '../models/accounts'
 
 export module Finance {
     export const router = express.Router();
+    const termsOfService = "The data provided is available for users of https://avatarcalculator.com/ for personal uses. No commercial derivatives from this data will be allowed without written permission from the " +
+        "owner of https://avatarcalculator.com/. Other developers may use this data with written permission from the owner of https://avatarcalculator.com/.";
 
     router.get('/avatars', async (req:Request, res:Response) => {
         if(Web3Utils.isAddress(req.query.wallet as string) === false || (req.query.wallet as string).substring(0, 2) !== '0x')
@@ -21,7 +23,8 @@ export module Finance {
             "avatars": result,
             "conversion": conversion,
             "prices": prices,
-            "sync": lastSyncTime
+            "sync": lastSyncTime,
+            "termsOfService": termsOfService
         });
     })
 
@@ -35,7 +38,22 @@ export module Finance {
             "avatars": result,
             "conversion": conversion,
             "prices": prices,
-            "sync": lastSyncTime
+            "sync": lastSyncTime,
+            "termsOfService": termsOfService
+        });
+    })
+
+    router.get('/avatars/prices', (req:Request, res:Response) => {
+        res.status(201).send({
+            "prices": prices,
+            "termsOfService": termsOfService
+        });
+    })
+
+    router.get('/avatars/timeseries', (req:Request, res:Response) => {
+        res.status(201).send({
+            "timeseries": priceTimeseries,
+            "termsOfService": termsOfService
         });
     })
 }
