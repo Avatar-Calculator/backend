@@ -155,7 +155,8 @@ const CONTRACT_ADDRESS_TO_COLLECTION_SLUG = {
     "0x150afa2dfcaaada471472dfa6ad4b79e718a197c": "spooky-season-treasureofophiel-x-reddit-collectibl",
     "0x04125a97a0f2583cd485be2c34b651cc13c38a27": "spooky-season-avirenft-x-reddit-collectible-ava",
     "0x21d426e2B88Fbf8b93adf0591A2D5B08d58F089f": "spooky-season-baldtuesdays-x-reddit-collectible",
-    "0x622d8fea4603ba9edaf1084b407052d8b0a9bed7": "reddit-cup-2022-x-reddit-collectible-avatars",
+    "0xa3396af20ce52bd3c7ab6d7046be617257f60eb9":"memetic-traders-x-reddit-collectible-avatars",
+    "0xc8d3a3a83bde5dad06d436694e3e22ac3e64d577":"reddit-recap-2022-x-reddit-collectible-avatars"
 }
 
 const ankrFilters = Object.keys(CONTRACT_ADDRESS_TO_COLLECTION_SLUG).map((obj) => { 
@@ -179,10 +180,7 @@ export async function determineAvatars(wallets: string[]) {
                     await new Promise(resolve => setTimeout(resolve, 1250));
                 }
                 const results = await getWalletCollections(wallet);
-                const expiry = await PremiumWallets.findOne({"wallet": wallet}) ?
-                    new Date(new Date().getTime() + 30 * 60000)
-                    :
-                    new Date(new Date().getTime() + 720 * 60000);
+                const expiry = new Date(new Date().getTime() + 86400000); //1 day
                 WalletCaches.create({
                     timestamp: new Date(),
                     wallet: wallet,
