@@ -5,6 +5,7 @@ import { Avatars } from '../models/avatar'
 import { AvatarTimeSeries } from '../models/avatar_timeseries'
 import { WalletCaches } from '../models/wallet_caches'
 import { getUserContracts, getUserNFTs } from './blockchain'
+import { RedisDB } from './redis'
 
 //Every 30 minutes
 export const initCron = () => {
@@ -164,9 +165,9 @@ export async function determineAvatars(wallets: string[]) {
     
     for(let wallet of wallets) {
         try {
-            const cache = await WalletCaches.findOne({"wallet": wallet});
+            const cache = await RedisDB.getData(`wallet_${wallet}`);
             if(cache) {
-                nfts = nfts.concat(cache.avatars);
+                nfts = nfts.concat(cache);
             } else {
                 while(web3Lock) {
                     await new Promise(resolve => setTimeout(resolve, 1250));
@@ -177,14 +178,8 @@ export async function determineAvatars(wallets: string[]) {
                 const redditNftContracts = filterRedditContracts(allNftContracts);
                 const results = await getUserNFTs(wallet, redditNftContracts);
                 web3Lock = false;
-
-                const expiry = new Date(new Date().getTime() + 86400000); //1 day
-                WalletCaches.create({
-                    timestamp: new Date(),
-                    wallet: wallet,
-                    avatars: results,
-                    expireAt: expiry
-                });
+                
+                await RedisDB.setData(`wallet_${wallet}`, results, 86400); //1 day
                 nfts = nfts.concat(results);
             }
         }

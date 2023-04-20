@@ -42,7 +42,7 @@ export async function getUserNFTs(wallet: string, contracts: string[], nextPageT
     const results = (await axios.get(url)).data;
     nfts = nfts.concat(results.ownedNfts.map(nft => nft.title.split("#")[0].slice(0, -1)).filter(str => str.length > 0));
     if(results.pageKey !== undefined) {
-        nfts = nfts.concat(await getUserNFTs(wallet, contract, results.pageKey));
+        nfts = nfts.concat(await getUserNFTs(wallet, contracts, results.pageKey));
     }
 
     return nfts;
