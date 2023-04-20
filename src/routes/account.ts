@@ -4,8 +4,6 @@ import Web3Utils from 'web3-utils'
 import { collectUniqueWallets } from '../config/dataCollection'
 import { isAuthenticated } from '../config/firebaseAuthMiddleware'
 import { Accounts } from '../models/accounts'
-import { PremiumAccounts } from '../models/premium_accounts'
-import { PremiumWallets } from '../models/premium_wallets'
 
 export module Account {
     export const router = express.Router();
@@ -30,27 +28,6 @@ export module Account {
             collectUniqueWallets(req.body);
 
         let account = await Accounts.findOne({ uid: res.locals.uid }).exec();
-        let premiumAccount= await PremiumAccounts.findOne({ uid: res.locals.uid }).exec();
-
-        if(premiumAccount) {
-            // @ts-ignore
-            const addWallets = req.body.filter((val) => !account.wallets.includes(val));
-            // @ts-ignore
-            const removeWallets = account.wallets.filter((val) => !req.body.includes(val));
-
-            for(const wallet of addWallets) {
-                await PremiumWallets.create({
-                    timestamp: new Date(),
-                    uid: account.uid,
-                    wallet: wallet,
-                    expireAt: premiumAccount.expireAt
-                });
-            }
-
-            for(const wallet of removeWallets) {
-                await PremiumWallets.deleteOne({ uid: account.uid, wallet: wallet });
-            }
-        }
 
         if(account) {
             account.wallets = req.body;

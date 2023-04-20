@@ -3,7 +3,6 @@ import cron from 'node-cron'
 
 import { Avatars } from '../models/avatar'
 import { AvatarTimeSeries } from '../models/avatar_timeseries'
-import { WalletCaches } from '../models/wallet_caches'
 import { getUserContracts, getUserNFTs } from './blockchain'
 import { RedisDB } from './redis'
 
